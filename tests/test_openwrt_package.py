@@ -162,6 +162,8 @@ class OpenWrtPackageTests(unittest.TestCase):
         self.assertIn("OPENWRT_VERSION", workflow)
         self.assertIn("25.12.4", workflow)
         self.assertIn("build-apk-in-sdk.sh", workflow)
+        self.assertIn("WORK_DIR: $RUNNER_TEMP/homebox-openwrt", workflow)
+        self.assertNotIn("WORK_DIR: ${{ runner.temp }}", workflow)
         self.assertIn("gawk", workflow)
         self.assertIn("rsync", workflow)
         self.assertIn("python3-distutils", workflow)
