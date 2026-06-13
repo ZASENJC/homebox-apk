@@ -1,69 +1,37 @@
-# Homebox
+# Homebox OpenWrt 25 APK
 
-家庭网络工具箱。用于组建家庭局域网时，对网络进行调试、检测、压测的工具集合。
+Homebox 是一个家庭网络工具箱，用于在家庭局域网内做 Ping、下载、上传和持续压测。本仓库面向 OpenWrt 25+ 用户提供可直接安装的 `.apk` 包，让 Homebox 可以直接跑在软路由或 OpenWrt 路由器上。
 
-## Feature
+OpenWrt 25 及更新版本使用 `apk` 包管理器。如果你的系统仍然使用 `opkg`，这些 `.apk` 文件不能直接安装。
 
-- 面向未来浏览器设计
-- 高达 10G 的浏览器速度测试
-- 自带 Ping 检测
-- 丰富的自定义测速参数
-- 服务端无需像传统文件拷贝一样需要固态的支持
-- 友好的 UI 交互
-- 针对低速网络(< 2.5G)优化测速资源占用
-
-[v1 进度追踪看板](https://github.com/XGHeaven/homebox/projects/1)
+[下载 OpenWrt APK Release](https://github.com/ZASENJC/homebox-apk/releases/tag/openwrt-apk-v0.1.1)
 
 ![dark-theme](./doc/dark-theme.png)
 
 ![light-theme](./doc/light-theme.png)
 
-## Requirement
+## 下载安装
 
-- 本软件需要一个服务端进行部署，然后通过客户端访问网页进行测试
-- 当需要对万兆以上网络测试的时候，需要保证客户端的性能（主要为 CPU 单核）足够强劲，否则可能会成为瓶颈。
-  具体的要求可以看后文的[性能测试](#Performance)
+在 Release 页面下载与你路由器目标平台匹配的文件。文件名中的目标平台要和 OpenWrt 的 target/subtarget 对应。
 
-## Install
+| OpenWrt 设备类型 | 下载文件 |
+| --- | --- |
+| x86 软路由、迷你主机、虚拟机 | `homebox-openwrt-x86-64.apk` |
+| MT7981、MT7986、Filogic 设备 | `homebox-openwrt-mediatek-filogic.apk` |
+| Raspberry Pi 4 | `homebox-openwrt-bcm27xx-bcm2711.apk` |
+| Rockchip ARM64 设备 | `homebox-openwrt-rockchip-armv8.apk` |
+| Qualcomm IPQ807x 设备 | `homebox-openwrt-qualcommax-ipq807x.apk` |
+| IPQ40xx 设备 | `homebox-openwrt-ipq40xx-generic.apk` |
+| 通用 ARM SystemReady 32 位 | `homebox-openwrt-armsr-armv7.apk` |
+| 通用 ARM SystemReady 64 位 | `homebox-openwrt-armsr-armv8.apk` |
+| Marvell mvebu Cortex-A53 | `homebox-openwrt-mvebu-cortexa53.apk` |
+| Marvell mvebu Cortex-A72 | `homebox-openwrt-mvebu-cortexa72.apk` |
 
-### Docker
+不知道设备目标平台时，可以在路由器上查看：
 
-首先你需要有一台服务器，只要能支持安装 Docker 即可，比如群辉、FreeNas、unRaid、CentOS 等等，暂时只支持 x86 服务器。
-
-```bash
-docker run -d -p 3300:3300 --name homebox xgheaven/homebox
+```sh
+ubus call system board
 ```
-
-安装并启动 `xgheaven/homebox` 镜像，默认情况下暴露的端口是 `3300`。
-然后在浏览器中输入 `http://your.server.ip:3300` 即可。
-
-### Binary
-
-直接在 [Release](https://github.com/XGHeaven/homebox/releases) 下载对应版本即可。
-
-解压之后直接执行 serve 命令即可启动服务，参数如下
-
-```text
-Usage: homebox serve [OPTIONS]
-
-Options:
-      --port <PORT>  Port to listen
-      --host <HOST>  Host to listen
-  -h, --help         Print help
-```
-
-### OpenWrt 25 APK
-
-OpenWrt 25 及更新版本使用 `apk` 包管理器，本仓库提供可直接安装的 Homebox `.apk` 包，适合把 Homebox 部署在软路由或 OpenWrt 路由器上，局域网设备通过浏览器访问测速页面。
-
-在本仓库的 [Releases](https://github.com/ZASENJC/homebox-apk/releases) 中下载与你路由器目标平台匹配的 APK。常见选择：
-
-- x86 软路由：`homebox-openwrt-x86-64.apk`
-- MT7981/MT7986/Filogic 设备：`homebox-openwrt-mediatek-filogic.apk`
-- Raspberry Pi 4：`homebox-openwrt-bcm27xx-bcm2711.apk`
-- Rockchip ARM64 设备：`homebox-openwrt-rockchip-armv8.apk`
-- Qualcomm IPQ807x 设备：`homebox-openwrt-qualcommax-ipq807x.apk`
-- 其他 ARM64 目标可优先尝试 `armsr-armv8` 或对应的 `mvebu-cortexa*`
 
 安装示例：
 
@@ -75,13 +43,28 @@ apk add --allow-untrusted /tmp/homebox-openwrt-x86-64.apk
 /etc/init.d/homebox start
 ```
 
-默认监听 `0.0.0.0:3300`，安装后在同一局域网内访问：
+启动后，在同一局域网内访问：
 
 ```text
 http://路由器IP:3300
 ```
 
-运行配置在 `/etc/config/homebox`，例如修改端口：
+## 使用方式
+
+Homebox 默认监听 `0.0.0.0:3300`，局域网设备用浏览器打开页面即可测试。
+
+- 单次测速：依次执行 Ping、Download、Upload，适合日常检查链路速度。
+- 持续压测：持续以高负载压测链路，适合测试无线漫游、路由器转发稳定性、多设备并发或散热表现。
+- 低速模式：默认模式，适合千兆或 2.5G 以下网络，资源占用较低。
+- 高速模式：适合 10G 及以上网络，会更激进地使用客户端 CPU 和浏览器资源。
+
+测速结果受客户端性能影响明显。万兆以上网络测试时，客户端 CPU 单核性能、浏览器版本和网卡性能都可能成为瓶颈。
+
+## 配置
+
+运行配置保存在 `/etc/config/homebox`。
+
+修改监听端口：
 
 ```sh
 uci set homebox.main.port='3300'
@@ -89,82 +72,116 @@ uci commit homebox
 /etc/init.d/homebox reload
 ```
 
-如果你的 OpenWrt 仍然使用 `opkg`，说明版本或发行分支较旧；本 APK 包面向 OpenWrt 25+ 的 `apk` 系统。
+修改监听地址：
 
-## Usage
-
-输入网址之后，会看到分为两种测试模式，分别是单次测速和持续压测。
-
-- **单次测速**的模式下，会依次执行 Ping/Download/Upload 测试，一般可以直接用这个模式。
-- **持续压测**的模式下，可以不限时的以最高速度压测链路，通常可以用于设备移动中链路稳定性测试、多设备压测、路由器转发散热性能测试等。
-
-默认情况下，设备会以低速模式运行，适用于大部分网络情况。
-也可以在**高级配置**中切换为高速模式，此时会将客户端资源榨干的方式尽可能压榨网络流量，用于万兆以上的高速网络。
-
-### Terminal(WIP)
-
-某些极端情况下，机器性能不足或者浏览器版本过低，可以直接通过复制浏览器中提供的测速脚本，在终端中测速。
-一方面方便某些懒人不愿意打命令行，另一方面脱离了浏览器的环境，测速性能和准确度会更高
-
-## Design
-
-由于众所周知的原因，浏览器中 JavaScript 的效率是比较低的，再加上网络请求的时候，需要占用大量的内存。
-所以为了避免主线程的卡顿，所有的请求都是在 Web Worker 中进行的。
-
-但仅仅一个 Worker 是支撑不住万兆网络的测速要求的，因为一个 Worker 并发请求的能力依旧很低。
-比如使用 curl 单链接单进程最高可以达到 2GB/s 的速度，核算过来大约 16Gbps。
-而一个 Worker 就算是开启多请求并发的速度，也仅仅只能达到 500MB/s，可见性能有多低。
-
-解决方案也很简单，创建多个 Worker 叠加测速，来叠加到万兆网络的要求。
-但是多个 Worker 对机器的性能要求很高，如果只是用于千兆网络测速，而机器性能又比较弱，就会导致测速不准。
-
-这就是为什么会有两种模式的原因，**高速模式**和**低速模式**。
-在高速模式下，会启用多 Worker，而低速模式下，仅仅启用一个 Worker 来减少资源的占用。
-
-## Performance
-
-> 目前我暂时没有万兆以上的移动端设备，如果哪位小伙伴有的话，可以将结果告诉我
-
-以下为客户端测试
-
-- 在 2017 款 13 寸 Macbook 上，低速配置下能够实现 4G 下载速度以及 3G 上传速度
-- 在 2019 款 16 寸 Macbook 上，在开启高速模式下，最高可以达到 12G 的下载速度以及 10G 的上传速度
-- 在 AMD 3600 的设备上，高速模式下可以达到 15G 的下载速度以及 12G 的上传速度
-- 在 M2 Macbook Air 的设备上，低速模式可以达到 20G 的下载速度以及 16G 的上传速度，不建议开启高速模式，会导致资源调度竞争从而数值下降且不稳定
-
-## FAQ
-
-### 如何选择合适的下载版本
-
-一般来说命名主要有 `<os>-<arch>` 决定。
-
-其中 `<os>` 一般是可以选择 `windows`/`darwin`(MacOS)/`linux`，字面意思，不做过多解释。
-
-而 `<arch>` 可以这样理解
-
-- `arm64` 就是 arm 机器，大部分手机和部分部分笔记本选择
-- `amd64` 就是 Intel 和 AMD 家的 64 位处理器（不要问为啥叫 AMD64 而不是 Intel64，问就是谁出的早谁命名，大部分台式机和笔记本和服务器选择这个就可以
-- `386` 一般是 32 位机器，目前基本上不会用到
-
-### 为什么我下载的文件无法运行
-
-大部分情况是你下载错格式了，如果不知道如何正确选择就全都下载下来一个个尝试，总能可以的。
-如果还不行，就提交 issue 把。
-
-### 为什么 openwrt 无法运行 arm64 格式的
-
-如果你的 openwrt 运行后突然有类似如下报错：
-
-```shell
-homebox-linux-arm64: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=9ae3c92ff31299b4b4cad04dda85694ecc9a6c65, for GNU/Linux 3.7.0, not stripped
+```sh
+uci set homebox.main.host='0.0.0.0'
+uci commit homebox
+/etc/init.d/homebox reload
 ```
 
-则可以尝试使用 arm64-musl 格式而非 arm64 文件
+查看服务状态：
 
-## Powered by
+```sh
+/etc/init.d/homebox status
+```
 
-- Rust(actix-web) 服务端
-- TypeScript 前端语言
-- React 前端框架
-- Rspack 前端打包工具
-- 其他依赖请查看相应文件
+查看运行参数：
+
+```sh
+uci show homebox
+```
+
+卸载：
+
+```sh
+/etc/init.d/homebox stop
+/etc/init.d/homebox disable
+apk del homebox
+```
+
+## 防火墙
+
+多数 OpenWrt 默认 LAN 区域允许局域网设备访问路由器服务。如果浏览器打不开 `http://路由器IP:3300`，先检查：
+
+```sh
+/etc/init.d/homebox status
+netstat -ltnp | grep 3300
+```
+
+包内安装了 `/etc/firewall.homebox`，供需要显式放行 LAN 侧 TCP 3300 的环境使用。复杂防火墙环境中，请确认 LAN 到路由器本机的 3300 端口没有被规则拦截。
+
+## 校验下载
+
+Release 页面提供 `SHA256SUMS.txt`。下载 APK 后可以校验：
+
+```sh
+sha256sum -c SHA256SUMS.txt
+```
+
+如果只下载了单个 APK，可以直接对比：
+
+```sh
+sha256sum homebox-openwrt-x86-64.apk
+```
+
+## 支持的目标
+
+当前 Release 已构建并上传以下 OpenWrt 25.12.4 目标：
+
+- `x86/64`
+- `armsr/armv7`
+- `armsr/armv8`
+- `mediatek/filogic`
+- `rockchip/armv8`
+- `bcm27xx/bcm2711`
+- `qualcommax/ipq807x`
+- `ipq40xx/generic`
+- `mvebu/cortexa53`
+- `mvebu/cortexa72`
+
+MIPS 目标，例如 `ramips/mt7621` 和 `ath79/generic`，当前没有放进快速构建矩阵。这类目标需要单独处理 Rust 标准库和 OpenWrt Rust 工具链，不能直接复用本仓库当前的快速构建方式。
+
+## 常见问题
+
+### 安装时报 `apk: not found`
+
+你的系统不是 OpenWrt 25+，或者当前固件仍然使用 `opkg`。本仓库发布的是 OpenWrt 25+ 的 `.apk` 包，不能直接安装到旧版 `opkg` 系统。
+
+### 页面打不开
+
+先确认服务正在运行：
+
+```sh
+/etc/init.d/homebox status
+```
+
+再确认端口在监听：
+
+```sh
+netstat -ltnp | grep 3300
+```
+
+如果服务和端口都正常，检查浏览器访问的 IP 是否是路由器 LAN IP，并确认防火墙没有拦截 LAN 侧 TCP 3300。
+
+### 应该下载 `linux-amd64` 还是这个 APK
+
+OpenWrt 通常是 musl libc 环境，普通 Linux glibc 二进制不一定能运行。本仓库的 APK 会使用面向 OpenWrt/musl 的构建产物，并安装 init 脚本和默认 UCI 配置。OpenWrt 25+ 用户优先下载本仓库的 `homebox-openwrt-*.apk`。
+
+### 测速达不到预期
+
+Homebox 是浏览器测速工具，客户端性能会影响结果。高速模式会占用更多 CPU 和浏览器资源；如果只是测试千兆或 2.5G 网络，默认低速模式通常更稳定。
+
+## 面向开发者
+
+构建脚本、OpenWrt 包定义和目标矩阵说明在 [openwrt/README.md](./openwrt/README.md)。
+
+本仓库的 OpenWrt APK workflow 会为常见目标生成 artifacts。普通用户优先使用 Release 页面，不需要自己编译。
+
+## 原项目
+
+上游项目：[XGHeaven/homebox](https://github.com/XGHeaven/homebox)
+
+原仓库 README：[XGHeaven/homebox README](https://github.com/XGHeaven/homebox/blob/master/README.md)
+
+Homebox 使用 Rust(actix-web) 编写服务端，前端使用 TypeScript、React 和 Rspack。
