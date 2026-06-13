@@ -56,7 +56,6 @@ jobs:
       SUBTARGET: ${{ matrix.subtarget }}
       SOURCE_VERSION: ${{ github.sha }}
       OUTPUT_DIR: ${{ github.workspace }}/openwrt/dist/${{ matrix.target }}-${{ matrix.subtarget }}
-      WORK_DIR: $RUNNER_TEMP/homebox-openwrt-${{ matrix.target }}-${{ matrix.subtarget }}
       PNPM: pnpm
 
     steps:
@@ -94,6 +93,8 @@ jobs:
             zstd
 
       - name: Build OpenWrt APK
+        env:
+          WORK_DIR: ${{ runner.temp }}/homebox-openwrt-${{ matrix.target }}-${{ matrix.subtarget }}
         run: openwrt/scripts/build-apk-in-sdk.sh
 
       - name: Upload APK
