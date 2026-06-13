@@ -52,6 +52,45 @@ Options:
   -h, --help         Print help
 ```
 
+### OpenWrt 25 APK
+
+OpenWrt 25 及更新版本使用 `apk` 包管理器，本仓库提供可直接安装的 Homebox `.apk` 包，适合把 Homebox 部署在软路由或 OpenWrt 路由器上，局域网设备通过浏览器访问测速页面。
+
+在本仓库的 [Releases](https://github.com/ZASENJC/homebox-apk/releases) 中下载与你路由器目标平台匹配的 APK。常见选择：
+
+- x86 软路由：`homebox-openwrt-x86-64.apk`
+- MT7981/MT7986/Filogic 设备：`homebox-openwrt-mediatek-filogic.apk`
+- Raspberry Pi 4：`homebox-openwrt-bcm27xx-bcm2711.apk`
+- Rockchip ARM64 设备：`homebox-openwrt-rockchip-armv8.apk`
+- Qualcomm IPQ807x 设备：`homebox-openwrt-qualcommax-ipq807x.apk`
+- 其他 ARM64 目标可优先尝试 `armsr-armv8` 或对应的 `mvebu-cortexa*`
+
+安装示例：
+
+```sh
+scp homebox-openwrt-x86-64.apk root@192.168.1.1:/tmp/
+ssh root@192.168.1.1
+apk add --allow-untrusted /tmp/homebox-openwrt-x86-64.apk
+/etc/init.d/homebox enable
+/etc/init.d/homebox start
+```
+
+默认监听 `0.0.0.0:3300`，安装后在同一局域网内访问：
+
+```text
+http://路由器IP:3300
+```
+
+运行配置在 `/etc/config/homebox`，例如修改端口：
+
+```sh
+uci set homebox.main.port='3300'
+uci commit homebox
+/etc/init.d/homebox reload
+```
+
+如果你的 OpenWrt 仍然使用 `opkg`，说明版本或发行分支较旧；本 APK 包面向 OpenWrt 25+ 的 `apk` 系统。
+
 ## Usage
 
 输入网址之后，会看到分为两种测试模式，分别是单次测速和持续压测。

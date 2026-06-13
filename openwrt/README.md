@@ -10,6 +10,46 @@ This is intended to be the independent OpenWrt APK branch for the
 `codex/openwrt-25-apk` or a branch forked from it, and merge upstream Homebox
 changes into that branch deliberately.
 
+## 用户安装说明
+
+普通用户不需要自己编译。请到
+[ZASENJC/homebox-apk Releases](https://github.com/ZASENJC/homebox-apk/releases)
+下载与你的 OpenWrt 目标平台匹配的 `.apk` 文件，然后上传到路由器安装。
+
+常见文件对应关系：
+
+- `homebox-openwrt-x86-64.apk`：x86 软路由、迷你主机、虚拟机
+- `homebox-openwrt-mediatek-filogic.apk`：MT7981、MT7986、Filogic 设备
+- `homebox-openwrt-bcm27xx-bcm2711.apk`：Raspberry Pi 4
+- `homebox-openwrt-rockchip-armv8.apk`：Rockchip ARM64 设备
+- `homebox-openwrt-qualcommax-ipq807x.apk`：Qualcomm IPQ807x 设备
+- `homebox-openwrt-armsr-armv7.apk` / `homebox-openwrt-armsr-armv8.apk`：通用 ARM SystemReady 目标
+- `homebox-openwrt-mvebu-cortexa53.apk` / `homebox-openwrt-mvebu-cortexa72.apk`：Marvell mvebu 目标
+
+安装示例：
+
+```sh
+scp homebox-openwrt-x86-64.apk root@192.168.1.1:/tmp/
+ssh root@192.168.1.1
+apk add --allow-untrusted /tmp/homebox-openwrt-x86-64.apk
+/etc/init.d/homebox enable
+/etc/init.d/homebox start
+```
+
+默认监听 `0.0.0.0:3300`。启动后，在同一局域网访问
+`http://路由器IP:3300` 即可使用 Homebox。
+
+修改端口或监听地址：
+
+```sh
+uci set homebox.main.port='3300'
+uci set homebox.main.host='0.0.0.0'
+uci commit homebox
+/etc/init.d/homebox reload
+```
+
+本包面向 OpenWrt 25+ 的 `apk` 包管理系统；旧版 `opkg` 系统不能直接安装这些 `.apk` 文件。
+
 The fast build path intentionally does not use OpenWrt's `lang/rust` package
 helper. That helper builds a target Rust/LLVM toolchain inside the SDK and is
 too slow for routine branch CI. Instead, the script:
