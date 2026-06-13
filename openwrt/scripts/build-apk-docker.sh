@@ -52,7 +52,7 @@ docker run --rm \
 				libncurses-dev \
 				libssl-dev \
 				python3 \
-				python3-distutils \
+				python3-setuptools \
 				rsync \
 				unzip \
 				wget \
