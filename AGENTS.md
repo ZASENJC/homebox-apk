@@ -17,30 +17,40 @@ Skills are auto-loaded from `.agents/skills/`. Each skill contains:
 - `SKILL.md` - Detailed instructions and workflow
 - `agents/openai.yaml` - Codex interface metadata
 
-Available skills:
-- tdd-workflow - Test-driven development with 80%+ coverage
-- security-review - Comprehensive security checklist
-- coding-standards - Universal coding standards
-- frontend-patterns - React/Next.js patterns
-- frontend-slides - Viewport-safe HTML presentations and PPTX-to-web conversion
+Installed project skills:
+- agent-introspection-debugging - Structured self-debugging workflow for AI agent failures
+- agent-sort - Evidence-backed ECC install planning and trimming
+- api-design - REST API design patterns
 - article-writing - Long-form writing from notes and voice references
+- backend-patterns - API design, database, caching, and backend architecture
+- brand-voice - Source-derived writing style profiles
+- bun-runtime - Bun runtime, package manager, bundler, and test runner
+- coding-standards - Universal coding standards
 - content-engine - Platform-native social content and repurposing
-- market-research - Source-attributed market and competitor research
-- investor-materials - Decks, memos, models, and one-pagers
-- investor-outreach - Personalized investor outreach and follow-ups
-- backend-patterns - API design, database, caching
+- crosspost - Multi-platform content distribution
+- deep-research - Multi-source research with firecrawl and exa MCPs
+- dmux-workflows - Multi-agent orchestration with dmux
+- documentation-lookup - Up-to-date documentation lookup via Context7 MCP
 - e2e-testing - Playwright E2E tests
 - eval-harness - Eval-driven development
-- strategic-compact - Context management
-- api-design - REST API design patterns
-- verification-loop - Build, test, lint, typecheck, security
-- deep-research - Multi-source research with firecrawl and exa MCPs
+- everything-claude-code - ECC development conventions
 - exa-search - Neural search via Exa MCP for web, code, and companies
-- claude-api - Anthropic Claude API patterns and SDKs
-- x-api - X/Twitter API integration for posting, threads, and analytics
-- crosspost - Multi-platform content distribution
 - fal-ai-media - AI image/video/audio generation via fal.ai
-- dmux-workflows - Multi-agent orchestration with dmux
+- frontend-patterns - React/Next.js patterns
+- frontend-slides - Viewport-safe HTML presentations and PPTX-to-web conversion
+- investor-materials - Decks, memos, models, and one-pagers
+- investor-outreach - Personalized investor outreach and follow-ups
+- market-research - Source-attributed market and competitor research
+- mcp-server-patterns - MCP server implementation patterns
+- mle-workflow - Production machine-learning engineering workflow
+- nextjs-turbopack - Next.js and Turbopack patterns
+- product-capability - PRD-to-capability planning
+- security-review - Comprehensive security checklist
+- strategic-compact - Context management
+- tdd-workflow - Test-driven development with 80%+ coverage
+- verification-loop - Build, test, lint, typecheck, and security verification
+- video-editing - AI-assisted video editing workflows
+- x-api - X/Twitter API integration for posting, threads, and analytics
 
 ## MCP Servers
 

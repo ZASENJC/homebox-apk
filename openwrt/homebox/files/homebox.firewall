@@ -1,0 +1,15 @@
+#!/bin/sh
+
+[ "${HOMEBOX_OPEN_FIREWALL:-1}" = "1" ] || exit 0
+
+HOMEBOX_PORT="${HOMEBOX_PORT:-3300}"
+
+if command -v nft >/dev/null 2>&1 && nft list table inet fw4 >/dev/null 2>&1; then
+	nft add rule inet fw4 input_lan tcp dport "$HOMEBOX_PORT" counter accept comment "homebox" 2>/dev/null || true
+	exit 0
+fi
+
+if command -v iptables >/dev/null 2>&1; then
+	iptables -C input_lan_rule -p tcp --dport "$HOMEBOX_PORT" -j ACCEPT 2>/dev/null || \
+		iptables -A input_lan_rule -p tcp --dport "$HOMEBOX_PORT" -j ACCEPT
+fi

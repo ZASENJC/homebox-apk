@@ -1,0 +1,104 @@
+name: OpenWrt APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      openwrt_version:
+        description: OpenWrt release version to build against
+        required: true
+        default: "25.12.4"
+  push:
+    branches:
+      - main
+      - codex/openwrt-25-apk
+      - openwrt-apk
+    paths:
+      - ".github/workflows/openwrt-apk.yml"
+      - "openwrt/**"
+      - "server/**"
+      - "web/**"
+
+env:
+  OPENWRT_VERSION: ${{ github.event.inputs.openwrt_version || '25.12.4' }}
+
+jobs:
+  build:
+    name: ${{ matrix.target }}/${{ matrix.subtarget }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86
+            subtarget: 64
+          - target: armsr
+            subtarget: armv7
+          - target: armsr
+            subtarget: armv8
+          - target: mediatek
+            subtarget: filogic
+          - target: rockchip
+            subtarget: armv8
+          - target: bcm27xx
+            subtarget: bcm2711
+          - target: qualcommax
+            subtarget: ipq807x
+          - target: ipq40xx
+            subtarget: generic
+          - target: mvebu
+            subtarget: cortexa53
+          - target: mvebu
+            subtarget: cortexa72
+
+    env:
+      TARGET: ${{ matrix.target }}
+      SUBTARGET: ${{ matrix.subtarget }}
+      SOURCE_VERSION: ${{ github.sha }}
+      OUTPUT_DIR: ${{ github.workspace }}/openwrt/dist/${{ matrix.target }}-${{ matrix.subtarget }}
+      WORK_DIR: ${{ runner.temp }}/homebox-openwrt-${{ matrix.target }}-${{ matrix.subtarget }}
+      PNPM: pnpm
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.12.2 --activate
+          pnpm --version
+
+      - name: Install SDK host dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            ca-certificates \
+            curl \
+            file \
+            gawk \
+            gettext \
+            git \
+            libncurses-dev \
+            libssl-dev \
+            python3 \
+            python3-distutils \
+            rsync \
+            unzip \
+            wget \
+            xz-utils \
+            zstd
+
+      - name: Build OpenWrt APK
+        run: openwrt/scripts/build-apk-in-sdk.sh
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: homebox-apk-${{ matrix.target }}-${{ matrix.subtarget }}
+          path: ${{ env.OUTPUT_DIR }}/*.apk
+          if-no-files-found: error

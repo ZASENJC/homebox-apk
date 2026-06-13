@@ -3,7 +3,7 @@ use actix_web::{
     get, head, http::header::ContentType, middleware, options, post, web, App, Error, HttpRequest,
     HttpResponse, HttpServer, Responder,
 };
-use clap::{command, Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand};
 use futures::{stream::iter, StreamExt};
 use include_dir::{include_dir, Dir};
 use mime_guess::mime;

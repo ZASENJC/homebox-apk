@@ -3,3 +3,8 @@
 .DS_Store
 
 /build
+/.agents
+/.codex
+/openwrt/.work
+/openwrt/.cache
+/openwrt/dist
